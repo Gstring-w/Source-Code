@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+
+    用户名：
+    <input type="text" class="user">
+    <span class="showUser"></span>
+    <br> 密码：
+    <input type="password" class="password">
+    <span class="showPs"></span>
+    <br>
+    <button id="btn">Login</button>
+
+
+    <!-- <div class="show">hello word</div>
+    <button type='fontS'>font-size</button>
+    <button type="color">color</button>
+    <button type="fontW">font-width</button>
+    <button type="bg">bg</button> -->
+    <script>
+        // 策略模式
+        var showUser = document.getElementsByClassName('showUser')[0];
+        var showPs = document.getElementsByClassName('showPs')[0];
+        var user = document.getElementsByClassName('user')[0];
+        var password = document.getElementsByClassName('password')[0];
+        
+        function Validator(){
+            this.cache = [];
+            this.textArr = [];
+        }
+Validator.prototype.strategies = {
+ isNonEmpty: function (value, errMsg) {
+        if (value != '') {
+            return true;
+        }
+        return errMsg
+    },
+ maxLength: function (value, length, errMsg) {
+        if (value.length >= length) {
+            return errMsg;
+        }
+        return true;
+    }
+}
+
+Validator.prototype.add = function (inputDom,showDom,strategy){
+    var self = this;
+    self.textArr.push(showDom);
+    strategy.forEach(function(ele,index){
+       
+        self.cache.push(function(){
+            var arr = ele.strategy.split(':');
+            var handle = arr.shift();
+            arr.unshift(inputDom.value);
+            arr.push(ele.errMsg);
+            var msg = self.strategies[handle].apply(self,arr);
+            // console.log(arr);
+            if(msg != true){
+                showDom.innerText = msg;
+            }
+            return msg;
+        })
+    })
+}
+Validator.prototype.start = function (){
+    
+    for(var j =0; j < this.textArr.length; j++){
+        this.textArr[j].innerText = '';
+    }
+    for(var i = 0;i < this.cache.length; i++ ){
+        this.cache[i]()
+    }
+}
+Validator.prototype.extend = function (config){
+    Validator.prototype.strategies[config._type] = config.handle;
+}
+
+
+
+
+
+
+        var validator = new Validator();
+        validator.extend({_type:"minLength",handle: function(value,length,errMsg){
+            if(value!='' && value.length < length){
+                return errMsg;
+            }
+            return true;
+        }})
+        validator.add(user, showUser,
+        [
+            {strategy: "isNonEmpty",errMsg: "用户名不能为空"},
+            { strategy: "maxLength:4", errMsg: "你不能是一个日本人"}
+            ]
+        )
+        validator.add(password, showPs,
+                [
+                    { strategy: "isNonEmpty", errMsg: "密码不能为空" },
+                    { strategy: "maxLength:6", errMsg: "密码长度不能大于6" },
+                    { strategy: "minLength:4", errMsg: "密码长度不能小于4" }
+                ]
+            )
+        btn.onclick = function () {
+            validator.start();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //         var btnArr = document.getElementsByTagName('button');
+        //         var oDiv = document.getElementsByClassName('show')[0];
+
+        //         for (var i = 0; i <= btnArr.length - 1; i++) {
+
+        //             btnArr[i].onclick = function () {
+        //                 // handle(this);
+        //                 myProxy(this)
+        //             }
+
+        //         }
+        //         var myProxy = (function(){                       //延时代理
+        //             var cache = [];
+        //             var timer = null;
+        //             return function(){
+        //                 cache.push(arguments);
+        //                 var arr = arguments;
+        //                 if(cache.length !== 0){
+        //                     clearTimeout(timer);
+        //                     timer = setTimeout(function(){
+        //                         for (var i = 0; i < cache.length; i++) {
+        //                             handle.apply(arr[0],cache[i]);
+        //                         }
+        //                     },2000)
+        //                 }
+        //             }
+        //         })()
+
+        //         function handle(dom) {
+        //             switch (dom.getAttribute('type')) {
+        //                 case "fontS":
+        //                     oDiv.style.fontSize = oDiv.offsetHeight + 10 + 'px';
+        //                     break;
+        //  case "color": oDiv.style.color = "red"; break;
+        //  case "fontW": oDiv.style.fontWeight ="bold"; break;
+        //  case "bg": oDiv.style.backgroundColor = "green"; break;
+
+        //             }
+        //         }
+
+
+
+
+
+
+
+
+
+
+        // function show(content) {
+        //     var oDiv = document.createElement('div');
+        //     document.body.appendChild(oDiv);
+        //     oDiv.innerText = content;
+        //     return oDiv;
+        // }
+        // var singleton = (function () { //单例模式 
+        //     var result;
+        //     return function (handle) {
+        //         var _args = [].slice.call(arguments, 1);
+        //         if (!result) {
+        //             result = handle.apply(this, _args)
+        //         }
+        //         return result
+        //     }
+        // })()
+    </script>
+</body>
+
+</html>

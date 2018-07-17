@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        var obj = {
+            value: '12345'
+        }
+        function show(arr) {
+            console.log(this.value + arr[4]);
+                console.log(arr);
+        }
+        Function.prototype.newCall = function () {
+            var ctx = arguments[0] || window;
+            ctx.fn = this;
+            var args = [];
+            for (var i = 1; i < arguments.length; i++) {
+                args.push('arguments[' + i + ']');
+            }
+            var reslut = eval('ctx.fn( ' + args.join(',') + ')');
+            delete ctx.fn;
+            return reslut
+        }
+        Function.prototype.newApply = function (ctx,arr) {
+            var ctx = ctx || window;
+            ctx.fn = this;
+            if(!arr){
+                var reslut = ctx.fn();
+                delete ctx.fn;
+                return reslut;
+            } else {
+            
+                var args = [];
+                for (var i = 0; i < arr.length; i++) {
+                    args.push('arr[' + i + ']');
+                }
+                console.log(args.join(','));
+                var reslut = eval('ctx.fn( ' + args.join(',') + ')');
+                delete ctx.fn;
+                return reslut
+            }
+        }
+        var arr = [1,2,3,4,5];
+        show.newApply(obj, arr);
+
+
+
+
+
+    </script>
+</body>
+
+</html>
